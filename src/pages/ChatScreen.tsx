@@ -94,44 +94,29 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
     }
   };
 
-  // Voice input processing
-  useEffect(() => {
-    if (voiceState.transcript && !voiceState.isListening) {
-      const intent = voiceIntentMatcher.matchIntent(voiceState.transcript);
-      
-      if (intent && intent.confidence > 0.3) {
-        const formattedInput = voiceIntentMatcher.formatVoiceInput(voiceState.transcript, intent);
-        setInputValue(formattedInput);
-        handleInputChange(formattedInput);
-        
-        // Auto-trigger UI components based on voice intent
-        if (intent.service === 'food-service' && intent.preferences) {
-          // Auto-select food type if mentioned
-          const foodType = intent.preferences.find(p => p === 'veg' || p === 'non-veg');
-          if (foodType) {
-            setFlowState({ 'service-cards': { id: foodType, title: foodType === 'veg' ? 'Vegetarian' : 'Non-Vegetarian' } });
-            setCurrentStep(1);
-          }
-        }
-      } else {
-        // Handle unrecognized voice input
-        setInputValue(voiceState.transcript);
-        if (voiceState.transcript.trim()) {
-          setFollowUpQuestion("I didn't quite catch that. Try saying 'laundry' or 'food service'.");
-          setPredictiveText("e.g., 'I need vegetarian dinner' or 'dry clean my shirts'");
-        }
-      }
-      
-      clearTranscript();
-    }
-  }, [voiceState.transcript, voiceState.isListening]);
-
-  // Update input with real-time transcript
+  // Show interim transcript in input while listening
   useEffect(() => {
     if (voiceState.isListening && voiceState.interimTranscript) {
       setInputValue(voiceState.interimTranscript);
     }
   }, [voiceState.interimTranscript, voiceState.isListening]);
+
+  // On final transcript, set it in input and trigger flow
+  useEffect(() => {
+    if (!voiceState.isListening && voiceState.transcript) {
+      setInputValue(voiceState.transcript);
+      handleInputChange(voiceState.transcript);
+      if (inputRef.current) inputRef.current.focus();
+      clearTranscript();
+    }
+  }, [voiceState.transcript, voiceState.isListening, clearTranscript]);
+
+  // Handle errors gracefully (optional: show error in input or as toast)
+  useEffect(() => {
+    if (voiceState.error && !voiceState.isListening) {
+      setFollowUpQuestion(voiceState.error);
+    }
+  }, [voiceState.error, voiceState.isListening]);
 
   const resetFlow = () => {
     setInputValue('');
@@ -233,6 +218,10 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
       } else if (currentStep === 1) {
         // This is meal type selection
         newFlowState = { ...newFlowState, 'meal-type': value };
+        // Ensure we keep the selected food type in flowState
+        if (!newFlowState['service-cards']) {
+          newFlowState['service-cards'] = value;
+        }
       }
     } else {
       newFlowState = { ...newFlowState, [componentType]: value };
@@ -317,6 +306,25 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
         setFollowUpQuestion(nextStep.followUpQuestion);
         setPredictiveText(nextStep.predictiveText);
         setUIComponents(nextStep.uiComponents);
+      } else if (currentFlow === 'food-service' && componentType === 'service-cards' && currentStep === 1) {
+        // If no next step, but we just selected meal type, force menu items step
+        const foodType = newFlowState['service-cards']?.id || 'veg';
+        const mealType = newFlowState['meal-type']?.id || newFlowState['service-cards']?.id;
+        if (foodType && mealType) {
+          // @ts-ignore: Accessing getFoodMenuItems for UI rendering
+          const menuItems = predictiveEngine.getFoodMenuItems(foodType, mealType);
+          setCurrentStep(currentStep + 1);
+          setFollowUpQuestion('What would you like to order?');
+          setPredictiveText('Select from our menu items');
+          setUIComponents([{
+            type: 'food-menu-cards',
+            data: {
+              title: 'Menu Items',
+              cards: menuItems
+            },
+            onSelect: () => {}
+          }]);
+        }
       } else {
         // Flow completed
         setFollowUpQuestion('Got it! Ready to confirm your request?');
