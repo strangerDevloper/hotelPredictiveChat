@@ -95,16 +95,16 @@ export class PredictiveEngine {
       triggers: ['laundry', 'pressing', 'dry clean', 'wash clothes', 'clothes'],
       steps: [
         {
-          followUpQuestion: 'Laundry—what assistance do you need with your clothes?',
-          predictiveText: 'e.g., wash & fold, stain removal, urgent delivery',
+          followUpQuestion: 'When do you need it back?',
+          predictiveText: 'e.g., same day, next day, standard delivery',
           uiComponents: [{
-            type: 'service-cards',
+            type: 'radio-group',
             data: {
-              title: 'Laundry Services',
-              cards: [
-                { id: 'wash-fold', title: 'Wash & Fold', image: '👕', description: 'Regular washing and folding' },
-                { id: 'dry-clean', title: 'Dry Cleaning', image: '🧥', description: 'Professional dry cleaning' },
-                { id: 'pressing', title: 'Pressing Only', image: '👔', description: 'Iron and press clothes' }
+              title: 'Turnaround Time',
+              options: [
+                { value: 'same-day', label: 'Same Day (+$10)' },
+                { value: 'next-day', label: 'Next Day' },
+                { value: '2-3-days', label: '2-3 Days (Standard)' }
               ]
             }
           }]
@@ -121,21 +121,6 @@ export class PredictiveEngine {
                 { id: 'pants', label: 'Pants', price: 7 },
                 { id: 'dresses', label: 'Dresses', price: 12 },
                 { id: 'suits', label: 'Suits', price: 20 }
-              ]
-            }
-          }]
-        },
-        {
-          followUpQuestion: 'When do you need it back?',
-          predictiveText: 'e.g., same day, next day, standard delivery',
-          uiComponents: [{
-            type: 'radio-group',
-            data: {
-              title: 'Turnaround Time',
-              options: [
-                { value: 'same-day', label: 'Same Day (+$10)' },
-                { value: 'next-day', label: 'Next Day' },
-                { value: '2-3-days', label: '2-3 Days (Standard)' }
               ]
             }
           }]
@@ -525,6 +510,21 @@ export class PredictiveEngine {
     if (flowId === 'laundry-service') {
       const laundrySteps = [
         {
+          followUpQuestion: 'When do you need it back?',
+          predictiveText: 'e.g., same day, next day, standard delivery',
+          uiComponents: [{
+            type: 'radio-group',
+            data: {
+              title: 'Turnaround Time',
+              options: [
+                { value: 'same-day', label: 'Same Day (+$10)' },
+                { value: 'next-day', label: 'Next Day' },
+                { value: '2-3-days', label: '2-3 Days (Standard)' }
+              ]
+            }
+          }]
+        },
+        {
           followUpQuestion: 'How many items do you have?',
           predictiveText: 'Select quantities for each item type',
           uiComponents: [{
@@ -536,21 +536,6 @@ export class PredictiveEngine {
                 { id: 'pants', label: 'Pants', price: 7 },
                 { id: 'dresses', label: 'Dresses', price: 12 },
                 { id: 'suits', label: 'Suits', price: 20 }
-              ]
-            }
-          }]
-        },
-        {
-          followUpQuestion: 'When do you need it back?',
-          predictiveText: 'e.g., same day, next day, standard delivery',
-          uiComponents: [{
-            type: 'radio-group',
-            data: {
-              title: 'Turnaround Time',
-              options: [
-                { value: 'same-day', label: 'Same Day (+$10)' },
-                { value: 'next-day', label: 'Next Day' },
-                { value: '2-3-days', label: '2-3 Days (Standard)' }
               ]
             }
           }]
