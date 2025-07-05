@@ -86,7 +86,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="h-screen flex flex-col bg-gray-50">
       {/* Status bar simulation */}
       <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center">
         <span>9:41</span>

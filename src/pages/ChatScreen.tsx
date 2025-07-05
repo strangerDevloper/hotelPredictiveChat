@@ -385,7 +385,7 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="h-screen flex flex-col bg-gray-50">
       {/* Status bar */}
       <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center">
         <span>9:41</span>

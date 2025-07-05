@@ -98,7 +98,7 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen flex flex-col bg-gray-50">
       {/* Status bar */}
       <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center">
         <span>9:41</span>
@@ -115,8 +115,8 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
         </div>
       </div>
 
-      {/* Header */}
-      <div className="bg-white px-4 py-4 shadow-sm">
+      {/* Header & Main Content */}
+      <div className="flex-1 flex flex-col bg-white px-4 py-4 shadow-sm overflow-auto min-h-0">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-lg font-semibold text-gray-800">Good Morning!</h1>
@@ -139,12 +139,19 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
         </div>
 
         {/* Hotel Image */}
-        <div className="mb-4">
-          <img 
-            src="/lovable-uploads/hotel-image.jpg"
-            alt="Ohio Hotel"
-            className="w-full h-40 object-cover rounded-lg"
-          />
+        <div className="mb-4 flex-none w-full rounded-lg overflow-hidden" style={{height: '22vh', minHeight: '100px', maxHeight: '180px'}}>
+          <svg viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full object-cover">
+            <rect width="800" height="200" rx="24" fill="#e0e7ef"/>
+            <rect x="60" y="80" width="680" height="80" rx="12" fill="#b6c6e3"/>
+            <rect x="120" y="60" width="120" height="60" rx="8" fill="#f7c873"/>
+            <rect x="560" y="60" width="120" height="60" rx="8" fill="#f7c873"/>
+            <rect x="320" y="40" width="160" height="100" rx="10" fill="#fff" stroke="#b6c6e3" strokeWidth="4"/>
+            <rect x="370" y="100" width="60" height="60" rx="6" fill="#b6c6e3"/>
+            <rect x="390" y="120" width="20" height="40" rx="4" fill="#f7c873"/>
+            <rect x="430" y="120" width="20" height="40" rx="4" fill="#f7c873"/>
+            <circle cx="400" cy="80" r="8" fill="#b6c6e3"/>
+            <circle cx="440" cy="80" r="8" fill="#b6c6e3"/>
+          </svg>
         </div>
 
         {/* Hotel Info */}
