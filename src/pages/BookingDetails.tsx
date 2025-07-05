@@ -51,7 +51,7 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
       )}
 
       {/* Status bar */}
-      <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center">
+      <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center flex-none">
         <span>9:41</span>
         <div className="flex items-center space-x-1">
           <div className="flex space-x-1">
@@ -66,18 +66,17 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
         </div>
       </div>
 
-      {/* Header & Main Content */}
-      <div className="flex-1 flex flex-col bg-white px-4 py-4 shadow-sm overflow-auto min-h-0">
+      {/* Welcome & Hotel Section - Fixed/Sticky */}
+      <div className="flex-none px-4 pt-4 pb-2 bg-gray-50">
         <Button
           variant="ghost"
           size="icon"
           onClick={onBack}
-          className="mb-4"
+          className="mb-2"
         >
           <ArrowLeft size={24} />
         </Button>
-        
-        <div className="text-center mb-4">
+        <div className="text-center mb-2">
           <h1 className="text-xl font-semibold text-gray-800 mb-1">
             Welcome to Ohio Hotel
           </h1>
@@ -85,94 +84,63 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
             We are thrilled to have you Ester Howard
           </p>
         </div>
-
-        {/* Hotel Image */}
-        <div className="mb-4 flex-none w-full rounded-lg overflow-hidden" style={{height: '22vh', minHeight: '100px', maxHeight: '180px'}}>
-          <svg viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full object-cover">
-            <rect width="800" height="200" rx="24" fill="#e0e7ef"/>
-            <rect x="60" y="80" width="680" height="80" rx="12" fill="#b6c6e3"/>
-            <rect x="120" y="60" width="120" height="60" rx="8" fill="#f7c873"/>
-            <rect x="560" y="60" width="120" height="60" rx="8" fill="#f7c873"/>
-            <rect x="320" y="40" width="160" height="100" rx="10" fill="#fff" stroke="#b6c6e3" strokeWidth="4"/>
-            <rect x="370" y="100" width="60" height="60" rx="6" fill="#b6c6e3"/>
-            <rect x="390" y="120" width="20" height="40" rx="4" fill="#f7c873"/>
-            <rect x="430" y="120" width="20" height="40" rx="4" fill="#f7c873"/>
-            <circle cx="400" cy="80" r="8" fill="#b6c6e3"/>
-            <circle cx="440" cy="80" r="8" fill="#b6c6e3"/>
-          </svg>
-        </div>
-
-        {/* Hotel Details */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Ohio Hotel</h2>
-          <p className="text-gray-600 text-sm">
-            D-124, Central Avenue, Block G, South City I, Sector 41, Gurugram, Haryana 122003
-          </p>
-        </div>
-      </div>
-
-      {/* Booking Information */}
-      <div className="bg-white mx-4 mt-4 rounded-lg p-4 shadow-sm">
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <p className="text-gray-500 text-sm mb-1">Check-in date</p>
-            <p className="font-semibold text-gray-800">16/07/24</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm mb-1">Check-out date</p>
-            <p className="font-semibold text-gray-800">29/07/24</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <p className="text-gray-500 text-sm mb-1">No. of people</p>
-            <p className="font-semibold text-gray-800">02</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm mb-1">Room number</p>
-            <p className="font-semibold text-gray-800">B-6</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-500 text-sm mb-1">Booking ID</p>
-            <p className="font-semibold text-gray-800">ABC123</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm mb-1">Payment</p>
-            <p className="font-semibold text-orange-500">Paid</p>
+        <div className="bg-white rounded-xl shadow p-2 flex flex-col items-center mb-2">
+          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=120&fit=crop&crop=center" alt="Ohio Hotel" className="w-full h-24 object-cover rounded-lg mb-2" />
+          <h2 className="text-base font-semibold text-gray-800 mb-1">Ohio Hotel</h2>
+          <p className="text-xs text-gray-500 mb-2 text-center">D-124, Central Avenue, Block G, South City I, Sector 41, Gurugram, Haryana 122003</p>
+          <div className="grid grid-cols-2 gap-4 w-full text-xs text-gray-700 mt-2">
+            <div>
+              <div className="font-medium">Check-in date</div>
+              <div className="font-bold">16/07/24</div>
+            </div>
+            <div>
+              <div className="font-medium">Check-out date</div>
+              <div className="font-bold">29/07/24</div>
+            </div>
+            <div>
+              <div className="font-medium">No. of people</div>
+              <div className="font-bold">02</div>
+            </div>
+            <div>
+              <div className="font-medium">Room number</div>
+              <div className="font-bold">B-6</div>
+            </div>
+            <div>
+              <div className="font-medium">Booking ID</div>
+              <div className="font-bold">ABC123</div>
+            </div>
+            <div>
+              <div className="font-medium">Payment</div>
+              <div className="font-bold text-orange-500">Paid</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Wi-Fi Details */}
-      <div className="bg-white mx-4 mt-4 rounded-lg p-4 shadow-sm">
-        <h3 className="font-semibold text-gray-800 mb-4">Wi-fi details</h3>
-        
-        <div className="mb-4">
-          <p className="text-gray-500 text-sm mb-2">Name</p>
-          <div className="flex items-center justify-between">
-            <p className="font-medium text-gray-800">Name Ohio hotels</p>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto px-4 pb-24">
+        {/* Wi-Fi Details */}
+        <div className="bg-white rounded-xl shadow p-4 mb-4">
+          <h3 className="font-semibold text-gray-800 mb-2">Wi-fi details</h3>
+          <div className="mb-2">
+            <div className="text-xs text-gray-500">Name</div>
+            <div className="font-medium text-gray-800 text-sm">Name Ohio hotels</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-500">Password</div>
+            <div className="flex items-center bg-gray-50 p-2 rounded-lg">
+              <div className="font-medium text-gray-800 text-sm">ABCD1234</div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => copyToClipboard('ABCD1234')}
+                className="h-6 w-6 ml-2"
+              >
+                <Copy size={16} />
+              </Button>
+            </div>
           </div>
         </div>
-
-        <div className="mb-6">
-          <p className="text-gray-500 text-sm mb-2">Password</p>
-          <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-            <p className="font-medium text-gray-800">ABCD1234</p>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => copyToClipboard('ABCD1234')}
-              className="h-8 w-8"
-            >
-              <Copy size={16} />
-            </Button>
-          </div>
-        </div>
-
         <Button 
           className="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg"
           onClick={onContinue}

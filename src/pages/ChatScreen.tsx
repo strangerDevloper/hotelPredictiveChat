@@ -61,6 +61,30 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Scroll to bottom when messages or UI components change, or when input is focused
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+    scrollToBottom();
+  }, [messages, uiComponents]);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      setTimeout(() => {
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 200); // allow keyboard animation
+    };
+    if (inputRef.current) {
+      inputRef.current.addEventListener('focus', handleFocus);
+      return () => inputRef.current?.removeEventListener('focus', handleFocus);
+    }
+  }, []);
+
   const handleInputChange = (value: string) => {
     setInputValue(value);
     
@@ -420,9 +444,9 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="flex flex-col bg-gray-50" style={{ height: '100dvh' }}>
       {/* Status bar */}
-      <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center">
+      <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center flex-none">
         <span>9:41</span>
         <div className="flex items-center space-x-1">
           <div className="flex space-x-1">
@@ -438,7 +462,7 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b bg-white">
+      <div className="flex items-center justify-between p-4 border-b bg-white flex-none">
         <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
@@ -448,71 +472,71 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
         </Button>
       </div>
 
-      {/* Dynamic UI Components */}
-      {uiComponents.length > 0 && (
-        <div className="p-4 border-b bg-gray-50">
-          <DynamicUIRenderer 
-            components={uiComponents} 
-            onSelect={handleComponentSelect}
-          />
-        </div>
-      )}
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map(message => (
-          message.isBookingCard ? (
-            <div key={message.id} className="flex justify-start">
-              <div className="max-w-[80%] bg-white border border-green-200 rounded-lg p-4 shadow-sm">
-                <div className="flex items-center space-x-2 mb-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-green-800">Booking Confirmed</h4>
-                    <p className="text-xs text-green-600">Request ID: {message.bookingDetails?.requestId}</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mb-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Service:</span>
-                    <span className="text-sm">{message.bookingDetails?.service}</span>
-                  </div>
-                  {message.bookingDetails?.items && message.bookingDetails.items.length > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">Items:</span>
-                      <span className="text-sm">{message.bookingDetails.items.join(', ')}</span>
+      {/* Main Chat Area: Dynamic UI + Messages */}
+      <div className="flex-1 flex flex-col overflow-y-auto">
+        {/* Dynamic UI Components (cards, selectors, etc.) */}
+        {uiComponents.length > 0 && (
+          <div className="p-4 border-b bg-gray-50 flex-shrink-0">
+            <DynamicUIRenderer 
+              components={uiComponents} 
+              onSelect={handleComponentSelect}
+            />
+          </div>
+        )}
+        {/* Messages */}
+        <div className="flex-1 flex flex-col justify-end p-2 pb-4 overflow-y-auto">
+          {messages.map(message => (
+            message.isBookingCard ? (
+              <div key={message.id} className="flex justify-start mb-2">
+                <div className="max-w-[80%] bg-white border border-green-200 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-green-600" />
                     </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Delivery:</span>
-                    <span className="text-sm">{message.bookingDetails?.turnaround}</span>
+                    <div>
+                      <h4 className="font-semibold text-green-800">Booking Confirmed</h4>
+                      <p className="text-xs text-green-600">Request ID: {message.bookingDetails?.requestId}</p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Est. Time:</span>
-                    <span className="text-sm">{message.bookingDetails?.estimatedTime}</span>
+                  <div className="space-y-2 mb-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">Service:</span>
+                      <span className="text-sm">{message.bookingDetails?.service}</span>
+                    </div>
+                    {message.bookingDetails?.items && message.bookingDetails.items.length > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Items:</span>
+                        <span className="text-sm">{message.bookingDetails.items.join(', ')}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">Delivery:</span>
+                      <span className="text-sm">{message.bookingDetails?.turnaround}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">Est. Time:</span>
+                      <span className="text-sm">{message.bookingDetails?.estimatedTime}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">Total Cost:</span>
+                      <span className="text-sm font-semibold">{message.bookingDetails?.cost}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">Total Cost:</span>
-                    <span className="text-sm font-semibold">{message.bookingDetails?.cost}</span>
-                  </div>
+                  <p className="text-xs text-gray-500">
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
                 </div>
-                
-                <p className="text-xs text-gray-500">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
               </div>
-            </div>
-          ) : (
-            <ChatMessage key={message.id} message={message} />
-          )
-        ))}
-        <div ref={messagesEndRef} />
+            ) : (
+              <ChatMessage key={message.id} message={message} />
+            )
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      {/* Input with Voice Integration */}
-      <div className="p-4 border-t bg-white">
+      {/* Input with Voice Integration - Fixed at Bottom */}
+      <div className="p-2 border-t bg-white flex-none">
         <div className="flex space-x-2">
           <div className="flex-1 relative">
             <div className="flex">
