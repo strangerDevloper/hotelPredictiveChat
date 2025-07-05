@@ -90,7 +90,7 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
         {/* Hotel Image */}
         <div className="mb-4">
           <img 
-            src="/lovable-uploads/c60c5ef5-713e-4b37-aa84-a93ae4229a1a.png"
+            src="/lovable-uploads/hotel-image.jpg"
             alt="Ohio Hotel"
             className="w-full h-48 object-cover rounded-lg"
           />
