@@ -265,6 +265,8 @@ export class PredictiveEngine {
   }
 
   predict(input: string): PredictionResult | null {
+
+    console.log('Predicting input:', input);
     const lowercaseInput = input.toLowerCase().trim();
     
     // Handle initial ambiguous queries

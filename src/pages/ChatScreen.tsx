@@ -76,9 +76,36 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
         if (prediction.flowId === 'food-service' && 
             (value.toLowerCase().includes('vegetarian') || value.toLowerCase().includes('veg') || 
              value.toLowerCase().includes('non-vegetarian') || value.toLowerCase().includes('non-veg'))) {
-          setCurrentStep(1); // Skip to meal selection
+          // If meal type is also present, skip to menu selection
           const foodType = value.toLowerCase().includes('non') ? 'non-veg' : 'veg';
-          setFlowState({ 'service-cards': { id: foodType, title: foodType === 'veg' ? 'Vegetarian' : 'Non-Vegetarian' } });
+          let mealType = null;
+          if (value.toLowerCase().includes('breakfast')) mealType = 'breakfast';
+          else if (value.toLowerCase().includes('lunch')) mealType = 'lunch';
+          else if (value.toLowerCase().includes('dinner')) mealType = 'dinner';
+          else if (value.toLowerCase().includes('snacks')) mealType = 'snacks';
+
+          if (mealType) {
+            setCurrentStep(2);
+            setFlowState({
+              'service-cards': { id: foodType, title: foodType === 'veg' ? 'Vegetarian' : 'Non-Vegetarian' },
+              'meal-type': { id: mealType, title: mealType.charAt(0).toUpperCase() + mealType.slice(1) }
+            });
+            // @ts-ignore: Accessing getFoodMenuItems for UI rendering
+            const menuItems = predictiveEngine.getFoodMenuItems(foodType, mealType);
+            setFollowUpQuestion('What would you like to order?');
+            setPredictiveText('Select from our menu items');
+            setUIComponents([{
+              type: 'food-menu-cards',
+              data: {
+                title: 'Menu Items',
+                cards: menuItems
+              },
+              onSelect: () => {}
+            }]);
+          } else {
+            setCurrentStep(1);
+            setFlowState({ 'service-cards': { id: foodType, title: foodType === 'veg' ? 'Vegetarian' : 'Non-Vegetarian' } });
+          }
         } else {
           setCurrentStep(0);
           setFlowState({});
