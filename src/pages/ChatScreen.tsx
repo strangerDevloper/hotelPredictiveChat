@@ -444,10 +444,10 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-50" style={{ height: '100dvh' }}>
+    <div className="flex flex-col bg-gray-50 safe-area-top safe-area-bottom" style={{ height: '100dvh' }}>
       {/* Status bar */}
       <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center flex-none">
-        <span>9:41</span>
+        <span className="font-medium">9:41</span>
         <div className="flex items-center space-x-1">
           <div className="flex space-x-1">
             <div className="w-1 h-1 bg-white rounded-full"></div>
@@ -455,28 +455,28 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
             <div className="w-1 h-1 bg-white rounded-full"></div>
             <div className="w-1 h-1 bg-white rounded-full"></div>
           </div>
-          <span>📶</span>
-          <span>📶</span>
-          <span>🔋</span>
+          <span className="text-xs">📶</span>
+          <span className="text-xs">📶</span>
+          <span className="text-xs">🔋</span>
         </div>
       </div>
 
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-white flex-none">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ArrowLeft className="w-4 h-4" />
+        <Button variant="ghost" size="icon" onClick={onBack} className="min-w-[44px] min-h-[44px]">
+          <ArrowLeft className="w-5 h-5" />
         </Button>
         <h1 className="text-lg font-semibold">Concierge Assistant</h1>
-        <Button variant="ghost" size="icon" onClick={resetFlow}>
-          <Home className="w-4 h-4" />
+        <Button variant="ghost" size="icon" onClick={resetFlow} className="min-w-[44px] min-h-[44px]">
+          <Home className="w-5 h-5" />
         </Button>
       </div>
 
       {/* Main Chat Area: Dynamic UI + Messages */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
+      <div className="flex-1 flex flex-col overflow-y-auto scroll-container">
         {/* Dynamic UI Components (cards, selectors, etc.) */}
         {uiComponents.length > 0 && (
-          <div className="p-4 border-b bg-gray-50 flex-shrink-0">
+          <div className="p-3 border-b bg-gray-50 flex-shrink-0">
             <DynamicUIRenderer 
               components={uiComponents} 
               onSelect={handleComponentSelect}
@@ -484,11 +484,11 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
           </div>
         )}
         {/* Messages */}
-        <div className="flex-1 flex flex-col justify-end p-2 pb-4 overflow-y-auto">
+        <div className="flex-1 flex flex-col justify-end p-3 pb-4 overflow-y-auto">
           {messages.map(message => (
             message.isBookingCard ? (
-              <div key={message.id} className="flex justify-start mb-2">
-                <div className="max-w-[80%] bg-white border border-green-200 rounded-lg p-4 shadow-sm">
+              <div key={message.id} className="flex justify-start mb-3">
+                <div className="max-w-[85%] bg-white border border-green-200 rounded-lg p-4 shadow-sm">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                       <Check className="w-4 h-4 text-green-600" />
@@ -536,7 +536,7 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
       </div>
 
       {/* Input with Voice Integration - Fixed at Bottom */}
-      <div className="p-2 border-t bg-white flex-none">
+      <div className="p-3 border-t bg-white flex-none safe-area-bottom">
         <div className="flex space-x-2">
           <div className="flex-1 relative">
             <div className="flex">
@@ -545,7 +545,7 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
                 value={inputValue}
                 onChange={(e) => handleInputChange(e.target.value)}
                 placeholder={getPlaceholderText()}
-                className={`pr-20 ${voiceState.isListening ? 'bg-blue-50 border-blue-300' : ''}`}
+                className={`pr-20 min-h-[44px] ${voiceState.isListening ? 'bg-blue-50 border-blue-300' : ''}`}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
@@ -566,8 +566,8 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
               </div>
             )}
           </div>
-          <Button onClick={handleSendMessage} size="icon">
-            <Send className="w-4 h-4" />
+          <Button onClick={handleSendMessage} size="icon" className="min-w-[44px] min-h-[44px]">
+            <Send className="w-5 h-5" />
           </Button>
         </div>
       </div>

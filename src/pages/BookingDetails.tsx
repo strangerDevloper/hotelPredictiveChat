@@ -24,7 +24,7 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 safe-area-top safe-area-bottom">
       {/* Confetti Animation */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
@@ -52,7 +52,7 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
 
       {/* Status bar */}
       <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center flex-none">
-        <span>9:41</span>
+        <span className="font-medium">9:41</span>
         <div className="flex items-center space-x-1">
           <div className="flex space-x-1">
             <div className="w-1 h-1 bg-white rounded-full"></div>
@@ -60,9 +60,9 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
             <div className="w-1 h-1 bg-white rounded-full"></div>
             <div className="w-1 h-1 bg-white rounded-full"></div>
           </div>
-          <span>📶</span>
-          <span>📶</span>
-          <span>🔋</span>
+          <span className="text-xs">📶</span>
+          <span className="text-xs">📶</span>
+          <span className="text-xs">🔋</span>
         </div>
       </div>
 
@@ -72,22 +72,22 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
           variant="ghost"
           size="icon"
           onClick={onBack}
-          className="mb-2"
+          className="mb-3 min-w-[44px] min-h-[44px]"
         >
           <ArrowLeft size={24} />
         </Button>
-        <div className="text-center mb-2">
-          <h1 className="text-xl font-semibold text-gray-800 mb-1">
+        <div className="text-center mb-3">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-1">
             Welcome to Ohio Hotel
           </h1>
           <p className="text-gray-600 text-sm">
             We are thrilled to have you Ester Howard
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow p-2 flex flex-col items-center mb-2">
+        <div className="bg-white rounded-xl shadow p-3 flex flex-col items-center mb-3">
           <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=120&fit=crop&crop=center" alt="Ohio Hotel" className="w-full h-24 object-cover rounded-lg mb-2" />
           <h2 className="text-base font-semibold text-gray-800 mb-1">Ohio Hotel</h2>
-          <p className="text-xs text-gray-500 mb-2 text-center">D-124, Central Avenue, Block G, South City I, Sector 41, Gurugram, Haryana 122003</p>
+          <p className="text-xs text-gray-500 mb-2 text-center px-2">D-124, Central Avenue, Block G, South City I, Sector 41, Gurugram, Haryana 122003</p>
           <div className="grid grid-cols-2 gap-4 w-full text-xs text-gray-700 mt-2">
             <div>
               <div className="font-medium">Check-in date</div>
@@ -118,23 +118,23 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-4 pb-24 scroll-container">
         {/* Wi-Fi Details */}
-        <div className="bg-white rounded-xl shadow p-4 mb-4">
-          <h3 className="font-semibold text-gray-800 mb-2">Wi-fi details</h3>
-          <div className="mb-2">
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
+          <h3 className="font-semibold text-gray-800 mb-3">Wi-fi details</h3>
+          <div className="mb-3">
             <div className="text-xs text-gray-500">Name</div>
             <div className="font-medium text-gray-800 text-sm">Name Ohio hotels</div>
           </div>
           <div>
             <div className="text-xs text-gray-500">Password</div>
-            <div className="flex items-center bg-gray-50 p-2 rounded-lg">
+            <div className="flex items-center bg-gray-50 p-3 rounded-lg">
               <div className="font-medium text-gray-800 text-sm">ABCD1234</div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => copyToClipboard('ABCD1234')}
-                className="h-6 w-6 ml-2"
+                className="h-8 w-8 ml-2 min-w-[32px] min-h-[32px]"
               >
                 <Copy size={16} />
               </Button>
@@ -142,7 +142,7 @@ const BookingDetails = ({ onBack, onContinue }: BookingDetailsProps) => {
           </div>
         </div>
         <Button 
-          className="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg"
+          className="w-full bg-blue-900 hover:bg-blue-800 active:bg-blue-700 text-white py-4 rounded-lg text-lg font-medium transition-all duration-200 transform active:scale-95 shadow-lg"
           onClick={onContinue}
         >
           Continue

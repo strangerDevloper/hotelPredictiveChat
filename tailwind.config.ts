@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -69,6 +68,18 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			spacing: {
+				'safe-top': 'env(safe-area-inset-top)',
+				'safe-bottom': 'env(safe-area-inset-bottom)',
+				'safe-left': 'env(safe-area-inset-left)',
+				'safe-right': 'env(safe-area-inset-right)',
+			},
+			minHeight: {
+				'screen-mobile': '100dvh',
+			},
+			height: {
+				'screen-mobile': '100dvh',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -121,6 +132,34 @@ export default {
 					'50%': {
 						transform: 'scale(1.05)',
 					}
+				},
+				'slide-up': {
+					'0%': {
+						transform: 'translateY(100%)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
+				},
+				'slide-down': {
+					'0%': {
+						transform: 'translateY(-100%)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0'
+					},
+					'100%': {
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
@@ -129,7 +168,10 @@ export default {
 				'scroll-left': 'scroll-left 20s linear infinite',
 				'pulse-mic': 'pulse-mic 1.5s ease-in-out infinite',
 				'ripple-wave': 'ripple-wave 1.5s ease-out infinite',
-				'breathe': 'breathe 2s ease-in-out infinite'
+				'breathe': 'breathe 2s ease-in-out infinite',
+				'slide-up': 'slide-up 0.3s ease-out',
+				'slide-down': 'slide-down 0.3s ease-out',
+				'fade-in': 'fade-in 0.2s ease-out'
 			},
 			animationDelay: {
 				'75': '75ms',

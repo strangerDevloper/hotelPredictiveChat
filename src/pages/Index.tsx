@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import QRCodeSection from '../components/QRCodeSection';
-import AutoScrollingServices from '../components/AutoScrollingServices';
+import AutoScrollingServiceCarousel from '../components/AutoScrollingServiceCarousel';
 import QRScanner from '../components/QRScanner';
 import BookingDetails from './BookingDetails';
 import ConciergeHome from './ConciergeHome';
@@ -11,7 +11,6 @@ const Index = () => {
   const [currentScreen, setCurrentScreen] = useState('home'); // 'home', 'scanner', 'booking', 'concierge', 'chat'
 
   const handleScanQRCode = () => {
-    console.log('Opening QR Scanner');
     setCurrentScreen('scanner');
   };
 
@@ -32,22 +31,18 @@ const Index = () => {
   };
 
   const handleScanResult = (result: string) => {
-    console.log('QR Code scanned:', result);
     setCurrentScreen('home');
   };
 
   const handleGoToBookingDetails = () => {
-    console.log('Navigating to booking details');
     setCurrentScreen('booking');
   };
 
   const handleGoToConcierge = () => {
-    console.log('Navigating to concierge home');
     setCurrentScreen('concierge');
   };
 
   const handleGoToChat = () => {
-    console.log('Navigating to chat');
     setCurrentScreen('chat');
   };
 
@@ -86,10 +81,10 @@ const Index = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-white safe-area-top safe-area-bottom">
       {/* Status bar simulation */}
       <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center">
-        <span>9:41</span>
+        <span className="font-medium">9:41</span>
         <div className="flex items-center space-x-1">
           <div className="flex space-x-1">
             <div className="w-1 h-1 bg-white rounded-full"></div>
@@ -97,34 +92,45 @@ const Index = () => {
             <div className="w-1 h-1 bg-white rounded-full"></div>
             <div className="w-1 h-1 bg-white rounded-full"></div>
           </div>
-          <span>📶</span>
-          <span>📶</span>
-          <span>🔋</span>
+          <span className="text-xs">📶</span>
+          <span className="text-xs">📶</span>
+          <span className="text-xs">🔋</span>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="pt-8 pb-6">
+      <div className="flex-1 flex flex-col items-center justify-start px-0 pt-6 pb-4 w-full">
         {/* Header */}
-        <div className="text-center mb-8 px-6">
-          <h1 className="text-2xl font-light text-gray-800 mb-2">
-            Welcome to Hotel
+        <div className="text-center mb-4 px-4">
+          <h1 className="text-xl font-medium text-gray-900 mb-1 leading-tight">
+            Welcome to Hotel<br />concierge services.
           </h1>
-          <h2 className="text-2xl font-light text-gray-800">
-            concierge services.
-          </h2>
         </div>
 
         {/* QR Code Section */}
-        <QRCodeSection />
+        <div className="mb-4 w-full flex justify-center">
+          <QRCodeSection />
+        </div>
 
-        {/* Auto-scrolling Services */}
-        <AutoScrollingServices />
+        {/* Description */}
+        <div className="mb-4 px-6 w-full">
+          <p className="text-center text-gray-800 text-base font-normal leading-snug">
+            Scan the code provided in your room<br />to access all hotel services.
+          </p>
+        </div>
+
+        {/* Auto-scrolling Service Carousel */}
+        <div className="w-full flex justify-center mb-4">
+          <AutoScrollingServiceCarousel />
+        </div>
+
+        {/* Spacer to push button to bottom */}
+        <div className="flex-1" />
 
         {/* Scan QR Code Button */}
-        <div className="px-6">
+        <div className="w-full px-4 pb-2">
           <Button 
-            className="w-full bg-blue-900 hover:bg-blue-800 text-white py-4 rounded-2xl text-lg font-medium"
+            className="w-full bg-blue-900 hover:bg-blue-800 active:bg-blue-700 text-white py-3 rounded-xl text-base font-semibold transition-all duration-200 transform active:scale-95 shadow-md"
             onClick={handleScanQRCode}
           >
             Scan QR code

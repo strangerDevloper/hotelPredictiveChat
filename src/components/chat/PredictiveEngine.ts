@@ -95,6 +95,21 @@ export class PredictiveEngine {
       triggers: ['laundry', 'pressing', 'dry clean', 'wash clothes', 'clothes'],
       steps: [
         {
+          followUpQuestion: 'What service would you like?',
+          predictiveText: 'e.g., wash & fold, dry clean, pressing',
+          uiComponents: [{
+            type: 'service-cards',
+            data: {
+              title: 'Clothing Services',
+              cards: [
+                { id: 'wash-fold', title: 'Wash & Fold', image: '👕', description: 'Regular washing and folding' },
+                { id: 'dry-clean', title: 'Dry Cleaning', image: '🧥', description: 'Professional dry cleaning' },
+                { id: 'pressing', title: 'Pressing Only', image: '👔', description: 'Iron and press clothes' }
+              ]
+            }
+          }]
+        },
+        {
           followUpQuestion: 'When do you need it back?',
           predictiveText: 'e.g., same day, next day, standard delivery',
           uiComponents: [{
@@ -234,6 +249,29 @@ export class PredictiveEngine {
       ]
     };
 
+    const veganItems = {
+      breakfast: [
+        { id: 'vegan-oatmeal', title: 'Vegan Oatmeal', image: '🥣', description: 'Oats with almond milk and fruits', price: 10 },
+        { id: 'avocado-toast', title: 'Avocado Toast', image: '🥑', description: 'Whole grain toast with avocado', price: 9 },
+        { id: 'chia-pudding', title: 'Chia Pudding', image: '🍧', description: 'Chia seeds with coconut milk', price: 8 }
+      ],
+      lunch: [
+        { id: 'vegan-bowl', title: 'Vegan Bowl', image: '🥗', description: 'Quinoa, chickpeas, veggies', price: 14 },
+        { id: 'vegan-burger', title: 'Vegan Burger', image: '🍔', description: 'Plant-based burger with salad', price: 13 },
+        { id: 'hummus-wrap', title: 'Hummus Wrap', image: '🌯', description: 'Wrap with hummus and veggies', price: 11 }
+      ],
+      dinner: [
+        { id: 'stuffed-peppers', title: 'Stuffed Peppers', image: '🫑', description: 'Peppers stuffed with rice and beans', price: 15 },
+        { id: 'vegan-curry', title: 'Vegan Curry', image: '🍛', description: 'Mixed vegetable curry with rice', price: 14 },
+        { id: 'tofu-stirfry', title: 'Tofu Stir-fry', image: '🥦', description: 'Tofu and veggies stir-fried', price: 13 }
+      ],
+      snacks: [
+        { id: 'energy-balls', title: 'Energy Balls', image: '🍘', description: 'Oats, dates, and nuts', price: 6 },
+        { id: 'vegan-smoothie', title: 'Vegan Smoothie', image: '🥤', description: 'Banana, spinach, almond milk', price: 7 },
+        { id: 'fruit-cups', title: 'Fruit Cups', image: '🍇', description: 'Mixed fresh fruits', price: 5 }
+      ]
+    };
+
     const nonVegItems = {
       breakfast: [
         { id: 'bacon-eggs', title: 'Bacon & Eggs', image: '🥓', description: 'Crispy bacon with eggs', price: 14 },
@@ -257,7 +295,9 @@ export class PredictiveEngine {
       ]
     };
 
-    if (foodType === 'veg') {
+    if (foodType === 'vegan') {
+      return veganItems[mealType as keyof typeof veganItems] || [];
+    } else if (foodType === 'veg') {
       return vegItems[mealType as keyof typeof vegItems] || [];
     } else {
       return nonVegItems[mealType as keyof typeof nonVegItems] || [];
@@ -417,6 +457,29 @@ export class PredictiveEngine {
       };
     }
     
+    // Handle vegan queries
+    if (lowercaseInput.includes('vegan')) {
+      // Try to extract meal type
+      let mealType = 'lunch';
+      if (lowercaseInput.includes('breakfast')) mealType = 'breakfast';
+      else if (lowercaseInput.includes('lunch')) mealType = 'lunch';
+      else if (lowercaseInput.includes('dinner')) mealType = 'dinner';
+      else if (lowercaseInput.includes('snack')) mealType = 'snacks';
+      const veganMenu = this.getFoodMenuItems('vegan', mealType);
+      return {
+        flowId: 'food-service',
+        followUpQuestion: 'Here are our vegan options:',
+        predictiveText: 'Select from our vegan menu',
+        uiComponents: [{
+          type: 'food-menu-cards',
+          data: {
+            title: 'Vegan Menu',
+            cards: veganMenu
+          }
+        }]
+      };
+    }
+    
     return null;
   }
 
@@ -511,6 +574,21 @@ export class PredictiveEngine {
     // Handle laundry service flow
     if (flowId === 'laundry-service') {
       const laundrySteps = [
+        {
+          followUpQuestion: 'What service would you like?',
+          predictiveText: 'e.g., wash & fold, dry clean, pressing',
+          uiComponents: [{
+            type: 'service-cards',
+            data: {
+              title: 'Clothing Services',
+              cards: [
+                { id: 'wash-fold', title: 'Wash & Fold', image: '👕', description: 'Regular washing and folding' },
+                { id: 'dry-clean', title: 'Dry Cleaning', image: '🧥', description: 'Professional dry cleaning' },
+                { id: 'pressing', title: 'Pressing Only', image: '👔', description: 'Iron and press clothes' }
+              ]
+            }
+          }]
+        },
         {
           followUpQuestion: 'When do you need it back?',
           predictiveText: 'e.g., same day, next day, standard delivery',
