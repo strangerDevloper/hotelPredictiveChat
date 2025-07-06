@@ -8,6 +8,7 @@ import { VoiceIntentMatcher } from '../components/chat/VoiceIntentMatcher';
 import { PredictiveEngine } from '../components/chat/PredictiveEngine';
 import { DynamicUIRenderer } from '../components/chat/DynamicUIRenderer';
 import { ChatMessage } from '../components/chat/ChatMessage';
+import { useBookings } from '../lib/BookingContext';
 
 interface ChatScreenProps {
   onBack: () => void;
@@ -50,6 +51,7 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
   const predictiveEngine = new PredictiveEngine();
   const voiceIntentMatcher = new VoiceIntentMatcher();
   const { voiceState, toggleListening, clearTranscript } = useVoiceRecognition();
+  const { addBooking } = useBookings();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -303,6 +305,7 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
         };
 
         setMessages(prev => [...prev, userMessage, botMessage]);
+        addBooking({ ...bookingDetails, timestamp: new Date().toISOString() });
         resetFlow();
       }
       return;

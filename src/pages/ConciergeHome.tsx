@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useBookings } from '../lib/BookingContext';
 
 interface ConciergeHomeProps {
   onBack: () => void;
@@ -83,6 +84,7 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
   ];
 
   const [activeCategory, setActiveCategory] = useState('most-popular');
+  const { bookings } = useBookings();
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -179,7 +181,27 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
             </div>
           </div>
         </div>
-
+        {/* My Bookings Section */}
+        {bookings.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg p-5 mb-5">
+            <h3 className="font-bold text-gray-900 mb-3">My Bookings</h3>
+            <div className="space-y-4">
+              {bookings.map((b) => (
+                <div key={b.requestId} className="border-b last:border-b-0 pb-3 last:pb-0">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-semibold text-blue-900">{b.service}</span>
+                    <span className="text-xs text-gray-500">{b.estimatedTime}</span>
+                  </div>
+                  <div className="text-sm text-gray-700 mb-1">{b.items.join(', ')}</div>
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Turnaround: {b.turnaround}</span>
+                    <span>Cost: {b.cost}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {/* Services */}
         <div>
           <h3 className="font-bold text-gray-900 mb-3">Services</h3>
