@@ -8,6 +8,8 @@ export interface Booking {
   estimatedTime: string;
   requestId: string;
   timestamp?: string;
+  paymentMethod: 'card' | 'reception';
+  paymentStatus: 'paid' | 'pending';
 }
 
 interface BookingContextType {

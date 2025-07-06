@@ -47,11 +47,14 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
   const [flowState, setFlowState] = useState<any>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { addBooking } = useBookings();
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [pendingBooking, setPendingBooking] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'reception' | null>(null);
 
   const predictiveEngine = new PredictiveEngine();
   const voiceIntentMatcher = new VoiceIntentMatcher();
   const { voiceState, toggleListening, clearTranscript } = useVoiceRecognition();
-  const { addBooking } = useBookings();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -284,30 +287,10 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
 
     // Handle confirmation
     if (componentType === 'confirmation-card' && value === 'confirmed') {
-      // Send the current input as user message
-      if (inputValue.trim()) {
-        const userMessage: ChatMessageType = {
-          id: Date.now().toString(),
-          type: 'user',
-          content: inputValue,
-          timestamp: new Date()
-        };
-
-        // Create booking confirmation message
-        const bookingDetails = generateBookingConfirmation(newFlowState, inputValue);
-        const botMessage: ChatMessageType = {
-          id: (Date.now() + 1).toString(),
-          type: 'bot',
-          content: 'Your request has been confirmed!',
-          timestamp: new Date(),
-          isBookingCard: true,
-          bookingDetails
-        };
-
-        setMessages(prev => [...prev, userMessage, botMessage]);
-        addBooking({ ...bookingDetails, timestamp: new Date().toISOString() });
-        resetFlow();
-      }
+      // Show payment method selection instead of immediate booking
+      const bookingDetails = generateBookingConfirmation(newFlowState, inputValue);
+      setPendingBooking(bookingDetails);
+      setShowPaymentModal(true);
       return;
     }
 
@@ -397,6 +380,45 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
     }
   };
 
+  // Payment handling
+  const handlePayment = (method: 'card' | 'reception') => {
+    setPaymentMethod(method);
+    if (method === 'card') {
+      // Simulate payment process
+      setTimeout(() => {
+        addBooking({ ...pendingBooking, timestamp: new Date().toISOString(), paymentMethod: 'card', paymentStatus: 'paid' });
+        setShowPaymentModal(false);
+        setPendingBooking(null);
+        setPaymentMethod(null);
+        // Show payment received message in chat
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          type: 'bot',
+          content: 'Payment received. Your request has been confirmed!',
+          timestamp: new Date(),
+          isBookingCard: true,
+          bookingDetails: { ...pendingBooking, paymentMethod: 'card', paymentStatus: 'paid' }
+        }]);
+        resetFlow();
+      }, 1800);
+    } else {
+      // Pay at reception
+      addBooking({ ...pendingBooking, timestamp: new Date().toISOString(), paymentMethod: 'reception', paymentStatus: 'pending' });
+      setShowPaymentModal(false);
+      setPendingBooking(null);
+      setPaymentMethod(null);
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        type: 'bot',
+        content: 'Your request has been confirmed! Please pay at reception.',
+        timestamp: new Date(),
+        isBookingCard: true,
+        bookingDetails: { ...pendingBooking, paymentMethod: 'reception', paymentStatus: 'pending' }
+      }]);
+      resetFlow();
+    }
+  };
+
   const getPlaceholderText = () => {
     if (voiceState.isListening) {
       return "Listening...";
@@ -447,134 +469,158 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-50 safe-area-top safe-area-bottom" style={{ height: '100dvh' }}>
-      {/* Status bar */}
-      <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center flex-none">
-        <span className="font-medium">9:41</span>
-        <div className="flex items-center space-x-1">
-          <div className="flex space-x-1">
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-          </div>
-          <span className="text-xs">📶</span>
-          <span className="text-xs">📶</span>
-          <span className="text-xs">🔋</span>
-        </div>
-      </div>
-
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b bg-white flex-none">
-        <Button variant="ghost" size="icon" onClick={onBack} className="min-w-[44px] min-h-[44px]">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <h1 className="text-lg font-semibold">Concierge Assistant</h1>
-        <Button variant="ghost" size="icon" onClick={resetFlow} className="min-w-[44px] min-h-[44px]">
-          <Home className="w-5 h-5" />
-        </Button>
-      </div>
-
-      {/* Main Chat Area: Dynamic UI + Messages */}
-      <div className="flex-1 flex flex-col overflow-y-auto scroll-container">
-        {/* Dynamic UI Components (cards, selectors, etc.) */}
-        {uiComponents.length > 0 && (
-          <div className="p-3 border-b bg-gray-50 flex-shrink-0">
-            <DynamicUIRenderer 
-              components={uiComponents} 
-              onSelect={handleComponentSelect}
-            />
-          </div>
-        )}
-        {/* Messages */}
-        <div className="flex-1 flex flex-col justify-end p-3 pb-4 overflow-y-auto">
-          {messages.map(message => (
-            message.isBookingCard ? (
-              <div key={message.id} className="flex justify-start mb-3">
-                <div className="max-w-[85%] bg-white border border-green-200 rounded-lg p-4 shadow-sm">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <Check className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-green-800">Booking Confirmed</h4>
-                      <p className="text-xs text-green-600">Request ID: {message.bookingDetails?.requestId}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2 mb-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">Service:</span>
-                      <span className="text-sm">{message.bookingDetails?.service}</span>
-                    </div>
-                    {message.bookingDetails?.items && message.bookingDetails.items.length > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-sm font-medium">Items:</span>
-                        <span className="text-sm">{message.bookingDetails.items.join(', ')}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">Delivery:</span>
-                      <span className="text-sm">{message.bookingDetails?.turnaround}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">Est. Time:</span>
-                      <span className="text-sm">{message.bookingDetails?.estimatedTime}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">Total Cost:</span>
-                      <span className="text-sm font-semibold">{message.bookingDetails?.cost}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <ChatMessage key={message.id} message={message} />
-            )
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Input with Voice Integration - Fixed at Bottom */}
-      <div className="p-3 border-t bg-white flex-none safe-area-bottom">
-        <div className="flex space-x-2">
-          <div className="flex-1 relative">
-            <div className="flex">
-              <Input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => handleInputChange(e.target.value)}
-                placeholder={getPlaceholderText()}
-                className={`pr-20 min-h-[44px] ${voiceState.isListening ? 'bg-blue-50 border-blue-300' : ''}`}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              />
-              <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                <VoiceButton
-                  isListening={voiceState.isListening}
-                  isProcessing={voiceState.isProcessing}
-                  isSupported={voiceState.isSupported}
-                  error={voiceState.error}
-                  onClick={toggleListening}
-                />
-              </div>
+    <>
+      <div className="flex flex-col bg-gray-50 safe-area-top safe-area-bottom" style={{ height: '100dvh' }}>
+        {/* Status bar */}
+        <div className="bg-black text-white text-sm py-2 px-4 flex justify-between items-center flex-none">
+          <span className="font-medium">9:41</span>
+          <div className="flex items-center space-x-1">
+            <div className="flex space-x-1">
+              <div className="w-1 h-1 bg-white rounded-full"></div>
+              <div className="w-1 h-1 bg-white rounded-full"></div>
+              <div className="w-1 h-1 bg-white rounded-full"></div>
+              <div className="w-1 h-1 bg-white rounded-full"></div>
             </div>
-            {getPredictiveHint() && (
-              <div className={`absolute top-full left-0 right-0 text-xs mt-1 px-3 ${
-                voiceState.error ? 'text-red-500' : 'text-gray-400'
-              }`}>
-                {getPredictiveHint()}
-              </div>
-            )}
+            <span className="text-xs">📶</span>
+            <span className="text-xs">📶</span>
+            <span className="text-xs">🔋</span>
           </div>
-          <Button onClick={handleSendMessage} size="icon" className="min-w-[44px] min-h-[44px]">
-            <Send className="w-5 h-5" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b bg-white flex-none">
+          <Button variant="ghost" size="icon" onClick={onBack} className="min-w-[44px] min-h-[44px]">
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-lg font-semibold">Concierge Assistant</h1>
+          <Button variant="ghost" size="icon" onClick={resetFlow} className="min-w-[44px] min-h-[44px]">
+            <Home className="w-5 h-5" />
           </Button>
         </div>
+
+        {/* Main Chat Area: Dynamic UI + Messages */}
+        <div className="flex-1 flex flex-col overflow-y-auto scroll-container">
+          {/* Dynamic UI Components (cards, selectors, etc.) */}
+          {uiComponents.length > 0 && (
+            <div className="p-3 border-b bg-gray-50 flex-shrink-0">
+              <DynamicUIRenderer 
+                components={uiComponents} 
+                onSelect={handleComponentSelect}
+              />
+            </div>
+          )}
+          {/* Messages */}
+          <div className="flex-1 flex flex-col justify-end p-3 pb-4 overflow-y-auto">
+            {messages.map(message => (
+              message.isBookingCard ? (
+                <div key={message.id} className="flex justify-start mb-3">
+                  <div className="max-w-[85%] bg-white border border-green-200 rounded-lg p-4 shadow-sm">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-green-800">Booking Confirmed</h4>
+                        <p className="text-xs text-green-600">Request ID: {message.bookingDetails?.requestId}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 mb-3">
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Service:</span>
+                        <span className="text-sm">{message.bookingDetails?.service}</span>
+                      </div>
+                      {message.bookingDetails?.items && message.bookingDetails.items.length > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-sm font-medium">Items:</span>
+                          <span className="text-sm">{message.bookingDetails.items.join(', ')}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Delivery:</span>
+                        <span className="text-sm">{message.bookingDetails?.turnaround}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Est. Time:</span>
+                        <span className="text-sm">{message.bookingDetails?.estimatedTime}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Total Cost:</span>
+                        <span className="text-sm font-semibold">{message.bookingDetails?.cost}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <ChatMessage key={message.id} message={message} />
+              )
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        {/* Input with Voice Integration - Fixed at Bottom */}
+        <div className="p-3 border-t bg-white flex-none safe-area-bottom">
+          <div className="flex space-x-2">
+            <div className="flex-1 relative">
+              <div className="flex">
+                <Input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  placeholder={getPlaceholderText()}
+                  className={`pr-20 min-h-[44px] ${voiceState.isListening ? 'bg-blue-50 border-blue-300' : ''}`}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                />
+                <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                  <VoiceButton
+                    isListening={voiceState.isListening}
+                    isProcessing={voiceState.isProcessing}
+                    isSupported={voiceState.isSupported}
+                    error={voiceState.error}
+                    onClick={toggleListening}
+                  />
+                </div>
+              </div>
+              {getPredictiveHint() && (
+                <div className={`absolute top-full left-0 right-0 text-xs mt-1 px-3 ${
+                  voiceState.error ? 'text-red-500' : 'text-gray-400'
+                }`}>
+                  {getPredictiveHint()}
+                </div>
+              )}
+            </div>
+            <Button onClick={handleSendMessage} size="icon" className="min-w-[44px] min-h-[44px]">
+              <Send className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
       </div>
-    </div>
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80 max-w-full flex flex-col items-center">
+            {!paymentMethod && (
+              <>
+                <h3 className="font-bold text-lg mb-4">Select Payment Method</h3>
+                <Button className="w-full mb-3 bg-blue-700 text-white" onClick={() => handlePayment('card')}>Pay by Card</Button>
+                <Button className="w-full bg-gray-200 text-gray-800" onClick={() => handlePayment('reception')}>Pay at Reception</Button>
+              </>
+            )}
+            {paymentMethod === 'card' && (
+              <>
+                <div className="flex flex-col items-center w-full">
+                  <div className="animate-pulse text-blue-700 text-3xl mb-2">💳</div>
+                  <div className="font-semibold mb-2">Processing payment...</div>
+                  <div className="text-xs text-gray-500 mb-2">Do not close this window</div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

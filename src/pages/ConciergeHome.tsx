@@ -193,9 +193,16 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
                     <span className="text-xs text-gray-500">{b.estimatedTime}</span>
                   </div>
                   <div className="text-sm text-gray-700 mb-1">{b.items.join(', ')}</div>
-                  <div className="flex justify-between text-xs text-gray-500">
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
                     <span>Turnaround: {b.turnaround}</span>
                     <span>Cost: {b.cost}</span>
+                  </div>
+                  <div className="text-xs font-semibold mt-1">
+                    {b.paymentMethod === 'reception' ? (
+                      <span className="text-yellow-700">To be paid at reception</span>
+                    ) : b.paymentStatus === 'paid' ? (
+                      <span className="text-green-700">Paid</span>
+                    ) : null}
                   </div>
                 </div>
               ))}
