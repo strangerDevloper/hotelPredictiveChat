@@ -119,13 +119,13 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
       <div className="flex-none px-4 pt-4 pb-2 bg-gray-50">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h1 className="text-xl font-semibold text-gray-800">Good Morning!</h1>
-            <p className="text-gray-600 text-sm">Esther Howard</p>
+            <h1 className="text-2xl font-bold text-gray-900 leading-tight">Good Morning!</h1>
+            <p className="text-gray-700 text-base font-medium">Esther Howard</p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-12 h-12 p-0 rounded-full bg-gray-300 min-w-[48px] min-h-[48px]">
-                <User className="w-5 h-5" />
+              <Button variant="ghost" className="w-12 h-12 p-0 rounded-full bg-gray-200 min-w-[48px] min-h-[48px] shadow-md">
+                <img src="/lovable-uploads/hotel-image.jpg" alt="Avatar" className="w-12 h-12 rounded-full object-cover border-2 border-white shadow" />
                 <span className="sr-only">Profile menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -138,18 +138,18 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
           </DropdownMenu>
         </div>
         {/* Hotel Image and Info Card */}
-        <div className="bg-white rounded-xl shadow p-3 flex flex-col items-center mb-3">
-          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=120&fit=crop&crop=center" alt="Ohio Hotel" className="w-full h-24 object-cover rounded-lg mb-2" />
-          <h2 className="text-base font-semibold text-gray-800 mb-1">Ohio Hotel</h2>
-          <p className="text-xs text-gray-500 mb-2 text-center px-2">D-124, Central Avenue, Block G, South City I, Sector 41, Gurugram, Haryana 122003</p>
+        <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center mb-4">
+          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=120&fit=crop&crop=center" alt="Ohio Hotel" className="w-full h-28 object-cover rounded-xl mb-3" />
+          <h2 className="text-lg font-bold text-gray-900 mb-1">Ohio Hotel</h2>
+          <p className="text-xs text-gray-500 mb-3 text-center px-2">D-124, Central Avenue, Block G, South City I, Sector 41, Gurugram, Haryana 122003</p>
           <div className="flex w-full justify-between text-xs text-gray-700 mt-2">
             <div>
-              <div className="font-medium">Check-out date</div>
-              <div className="font-bold">29/07/24</div>
+              <div className="font-semibold">Check-out date</div>
+              <div className="font-bold text-base">29/07/24</div>
             </div>
             <div>
-              <div className="font-medium">Room number</div>
-              <div className="font-bold">B-6</div>
+              <div className="font-semibold">Room number</div>
+              <div className="font-bold text-base">B-6</div>
             </div>
           </div>
         </div>
@@ -158,16 +158,16 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pb-32 scroll-container">
         {/* Wi-Fi Details */}
-        <div className="bg-white rounded-xl shadow p-4 mb-4">
-          <h3 className="font-semibold text-gray-800 mb-3">Wi-fi details</h3>
+        <div className="bg-white rounded-2xl shadow-lg p-5 mb-5">
+          <h3 className="font-bold text-gray-900 mb-3">Wi-fi details</h3>
           <div className="mb-3">
             <div className="text-xs text-gray-500">Name</div>
-            <div className="font-medium text-gray-800 text-sm">Ohio hotels</div>
+            <div className="font-semibold text-gray-900 text-sm">Ohio hotels</div>
           </div>
           <div>
             <div className="text-xs text-gray-500">Password</div>
-            <div className="flex items-center bg-gray-50 p-3 rounded-lg">
-              <div className="font-medium text-gray-800 text-sm">ABCD1234</div>
+            <div className="flex items-center bg-gray-100 p-3 rounded-lg">
+              <div className="font-semibold text-gray-900 text-sm tracking-widest">ABCD1234</div>
               <Button
                 variant="ghost"
                 size="icon"
@@ -182,29 +182,30 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
 
         {/* Services */}
         <div>
-          <h3 className="font-semibold text-gray-800 mb-3">Services</h3>
-          <div className="flex space-x-2 mb-4 overflow-x-auto pb-2">
+          <h3 className="font-bold text-gray-900 mb-3">Services</h3>
+          <div className="flex space-x-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
             {serviceCategories.map((category) => (
               <Button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`${
-                  activeCategory === category.id
-                    ? 'bg-blue-900 hover:bg-blue-800 text-white'
-                    : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-200'
-                } text-xs px-4 py-2 h-10 rounded-full whitespace-nowrap min-w-fit`}
+                className={
+                  `text-xs px-5 py-2 h-9 rounded-full whitespace-nowrap min-w-fit font-medium transition-all duration-150 ` +
+                  (activeCategory === category.id
+                    ? 'bg-blue-900 text-white border-none'
+                    : 'bg-white text-gray-800 border border-gray-300')
+                }
               >
                 {category.name}
               </Button>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {getCurrentServices().map((service, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg shadow-sm active:scale-95 transition-transform duration-150">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
-                  <span className="text-blue-600 text-lg">{service.icon}</span>
+              <div key={index} className="bg-white p-5 rounded-2xl shadow-md active:scale-95 transition-transform duration-150 flex flex-col items-start">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
+                  <span className="text-blue-700 text-2xl">{service.icon}</span>
                 </div>
-                <p className="text-gray-800 text-xs leading-tight">{service.text}</p>
+                <p className="text-gray-900 text-sm font-medium leading-tight">{service.text}</p>
               </div>
             ))}
           </div>
@@ -212,17 +213,17 @@ const ConciergeHome = ({ onBack, onOpenChat }: ConciergeHomeProps) => {
       </div>
 
       {/* Chat Input - Fixed at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white p-3 shadow-md z-10 safe-area-bottom">
-        <div className="bg-white rounded-full shadow-lg flex items-center px-4 py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg z-20 safe-area-bottom">
+        <div className="bg-gray-100 rounded-full shadow flex items-center px-5 py-3">
           <input
             type="text"
             placeholder="Ask me anything"
-            className="flex-1 outline-none text-sm min-h-[44px]"
+            className="flex-1 outline-none text-base min-h-[44px] bg-transparent font-medium"
             onFocus={onOpenChat}
             readOnly
           />
-          <Button size="icon" className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-700 min-w-[40px] min-h-[40px]" onClick={onOpenChat}>
-            <Send size={14} />
+          <Button size="icon" className="h-11 w-11 rounded-full bg-blue-600 hover:bg-blue-700 min-w-[44px] min-h-[44px] shadow-md" onClick={onOpenChat}>
+            <Send size={16} />
           </Button>
         </div>
       </div>
