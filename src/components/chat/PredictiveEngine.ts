@@ -191,33 +191,23 @@ export class PredictiveEngine {
 
     // Room Cleaning Flow
     'room-cleaning': {
-      triggers: ['clean', 'housekeeping', 'room service', 'tidy'],
+      triggers: ['clean', 'housekeeping', 'room service', 'tidy', 'housekeeping service'],
       steps: [
         {
-          followUpQuestion: 'Room cleaning—what services do you need?',
-          predictiveText: 'e.g., make beds, clean bathroom, vacuum',
+          followUpQuestion: 'When would you like housekeeping service?',
+          predictiveText: 'Select a half-hour time slot',
           uiComponents: [{
-            type: 'checkbox-group',
+            type: 'radio-group',
             data: {
-              title: 'Cleaning Services',
-              options: [
-                { value: 'beds', label: 'Make beds and change linens' },
-                { value: 'bathroom', label: 'Clean bathroom' },
-                { value: 'vacuum', label: 'Vacuum carpets' },
-                { value: 'dust', label: 'Dust furniture' },
-                { value: 'trash', label: 'Empty trash bins' }
-              ]
-            }
-          }]
-        },
-        {
-          followUpQuestion: 'When would you like your room cleaned?',
-          predictiveText: 'e.g., now, this afternoon, tomorrow morning',
-          uiComponents: [{
-            type: 'time-picker',
-            data: {
-              title: 'Preferred Cleaning Time',
-              defaultTime: '14:00'
+              title: 'Select Time Slot',
+              options: Array.from({ length: 20 }, (_, i) => {
+                const hour = 9 + Math.floor(i / 2);
+                const min = i % 2 === 0 ? '00' : '30';
+                return {
+                  value: `${hour.toString().padStart(2, '0')}:${min}`,
+                  label: `${hour.toString().padStart(2, '0')}:${min}`
+                };
+              })
             }
           }]
         }
@@ -435,23 +425,23 @@ export class PredictiveEngine {
     }
 
     // Handle room cleaning triggers
-    if (lowercaseInput.includes('clean') || lowercaseInput.includes('housekeeping') || 
-        lowercaseInput.includes('room service') || lowercaseInput.includes('tidy')) {
+    if (lowercaseInput.includes('housekeeping service')) {
       return {
         flowId: 'room-cleaning',
-        followUpQuestion: 'Room cleaning—what services do you need?',
-        predictiveText: 'e.g., make beds, clean bathroom, vacuum',
+        followUpQuestion: 'When would you like housekeeping service?',
+        predictiveText: 'Select a half-hour time slot',
         uiComponents: [{
-          type: 'checkbox-group',
+          type: 'radio-group',
           data: {
-            title: 'Cleaning Services',
-            options: [
-              { value: 'beds', label: 'Make beds and change linens' },
-              { value: 'bathroom', label: 'Clean bathroom' },
-              { value: 'vacuum', label: 'Vacuum carpets' },
-              { value: 'dust', label: 'Dust furniture' },
-              { value: 'trash', label: 'Empty trash bins' }
-            ]
+            title: 'Select Time Slot',
+            options: Array.from({ length: 20 }, (_, i) => {
+              const hour = 9 + Math.floor(i / 2);
+              const min = i % 2 === 0 ? '00' : '30';
+              return {
+                value: `${hour.toString().padStart(2, '0')}:${min}`,
+                label: `${hour.toString().padStart(2, '0')}:${min}`
+              };
+            })
           }
         }]
       };

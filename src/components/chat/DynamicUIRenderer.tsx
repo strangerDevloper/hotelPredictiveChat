@@ -13,6 +13,7 @@ interface DynamicUIRendererProps {
 
 const DynamicUIRenderer = ({ components, onSelect }: DynamicUIRendererProps) => {
   const [quantities, setQuantities] = useState<{[key: string]: number}>({});
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
 
   const updateQuantity = (itemId: string, delta: number) => {
     const newQuantity = Math.max(0, (quantities[itemId] || 0) + delta);
@@ -154,6 +155,32 @@ const DynamicUIRenderer = ({ components, onSelect }: DynamicUIRendererProps) => 
         );
 
       case 'radio-group':
+        if (component.data.title === 'Select Time Slot') {
+          return (
+            <div key={index} className="mb-4">
+              <h4 className="font-medium mb-3">{component.data.title}</h4>
+              <div className="grid grid-cols-3 gap-3">
+                {component.data.options.map((option: any) => (
+                  <button
+                    key={option.value}
+                    className={
+                      'rounded-full px-4 py-2 text-sm font-medium border transition ' +
+                      (selectedTimeSlot === option.value
+                        ? 'bg-blue-700 text-white border-blue-700 shadow'
+                        : 'bg-white text-gray-800 border-gray-300 hover:bg-blue-50')
+                    }
+                    onClick={() => {
+                      setSelectedTimeSlot(option.value);
+                      onSelect(component.type, option.value);
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        }
         return (
           <div key={index} className="mb-4">
             <h4 className="font-medium mb-3">{component.data.title}</h4>

@@ -244,6 +244,14 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
           estimatedTime = '24 hours';
         }
       }
+    } else if (currentFlow === 'room-cleaning') {
+      service = 'Housekeeping Service';
+      // Store selected time slot as item
+      const timeSlot = flowState['radio-group'] || 'Time Slot';
+      items = [`Time Slot: ${timeSlot}`];
+      cost = '$20';
+      estimatedTime = timeSlot;
+      turnaround = timeSlot;
     }
 
     return {
@@ -316,6 +324,16 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
           }]);
         }
       }
+      return;
+    }
+
+    // For room-cleaning, after selecting time slot, show payment modal
+    if (currentFlow === 'room-cleaning' && componentType === 'radio-group') {
+      setFlowState((prev: any) => ({ ...prev, 'radio-group': value }));
+      // Show payment modal directly
+      const bookingDetails = generateBookingConfirmation({ ...flowState, 'radio-group': value }, inputValue);
+      setPendingBooking(bookingDetails);
+      setShowPaymentModal(true);
       return;
     }
 
