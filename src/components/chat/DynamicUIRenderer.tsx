@@ -58,21 +58,51 @@ const DynamicUIRenderer = ({ components, onSelect }: DynamicUIRendererProps) => 
             <h4 className="font-medium mb-3">{component.data.title}</h4>
             <div className="grid grid-cols-1 gap-3">
               {component.data.cards.map((card: any) => (
-                <Button
-                  key={card.id}
-                  variant="outline"
-                  className="h-auto p-4 flex items-center text-left hover:bg-blue-50 hover:border-blue-300"
-                  onClick={() => onSelect(component.type, card)}
-                >
+                <div key={card.id} className="flex items-center p-4 border rounded-lg">
                   <div className="text-2xl mr-3">{card.image}</div>
                   <div className="flex-1">
                     <div className="font-medium text-sm mb-1">{card.title}</div>
                     <div className="text-xs text-gray-500 mb-1">{card.description}</div>
                     <div className="text-sm font-semibold text-green-600">${card.price}</div>
                   </div>
-                </Button>
+                  <div className="flex items-center space-x-2 ml-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => updateQuantity(card.id, -1)}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-8 text-center font-medium">
+                      {quantities[card.id] || 0}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => updateQuantity(card.id, 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               ))}
             </div>
+            <Button
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
+              onClick={() => {
+                const selectedItems = component.data.cards
+                  .filter((card: any) => quantities[card.id] > 0)
+                  .map((card: any) => ({ ...card, quantity: quantities[card.id] }));
+                if (selectedItems.length > 0) {
+                  onSelect('food-menu-cards', selectedItems);
+                }
+              }}
+              disabled={Object.values(quantities).every(q => q === 0)}
+            >
+              Add to Order
+            </Button>
           </div>
         );
 

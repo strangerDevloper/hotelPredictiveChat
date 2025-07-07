@@ -196,17 +196,13 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
       service = 'Food Service';
       const foodType = flowState['service-cards']?.title || 'Food';
       const mealType = flowState['meal-type']?.title || 'Meal';
-      const selectedFood = flowState['food-menu-cards']?.title || 'Food Item';
-      const quantity = flowState['quantity-selector']?.quantity || 1;
-      
-      service = `${foodType} ${mealType}`;
-      items = [`${quantity}x ${selectedFood}`];
-      
-      // Calculate food cost
-      const itemPrice = flowState['food-menu-cards']?.price || 15;
-      const totalCost = itemPrice * quantity;
+      // Support multiple food items
+      const selectedFoods = Array.isArray(flowState['food-menu-cards']) ? flowState['food-menu-cards'] : [flowState['food-menu-cards']];
+      items = selectedFoods.filter(f => f && f.quantity > 0).map(f => `${f.quantity}x ${f.title}`);
+      // Calculate total cost
+      const totalCost = selectedFoods.reduce((sum, f) => sum + (f.price * (f.quantity || 0)), 0);
       cost = `$${totalCost}`;
-      
+      service = `${foodType} ${mealType}`;
       // Set delivery time based on selection
       const deliveryTime = flowState['radio-group'];
       if (deliveryTime === 'asap') {
@@ -291,6 +287,35 @@ const ChatScreen = ({ onBack }: ChatScreenProps) => {
       const bookingDetails = generateBookingConfirmation(newFlowState, inputValue);
       setPendingBooking(bookingDetails);
       setShowPaymentModal(true);
+      return;
+    }
+
+    // For food-menu-cards, store the array of selected items in flowState
+    if (componentType === 'food-menu-cards') {
+      setFlowState((prev: any) => ({ ...prev, 'food-menu-cards': value }));
+      // Progress to next step
+      if (currentFlow) {
+        const nextStep = predictiveEngine.getNextStep(currentFlow, currentStep + 1, { ...newFlowState, 'food-menu-cards': value });
+        if (nextStep) {
+          setCurrentStep(currentStep + 1);
+          setFollowUpQuestion(nextStep.followUpQuestion);
+          setPredictiveText(nextStep.predictiveText);
+          setUIComponents(nextStep.uiComponents);
+        } else {
+          setFollowUpQuestion('Got it! Ready to confirm your request?');
+          setPredictiveText('Review details and confirm');
+          setUIComponents([{
+            type: 'confirmation-card',
+            data: {
+              title: 'Confirm Request',
+              summary: inputValue,
+              estimatedTime: currentFlow === 'food-service' ? '30-45 minutes' : '2-3 hours',
+              cost: currentFlow === 'food-service' ? '$18' : '$25'
+            },
+            onSelect: () => {}
+          }]);
+        }
+      }
       return;
     }
 
